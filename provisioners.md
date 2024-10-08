@@ -1,5 +1,5 @@
 Certainly, let's delve deeper into the `file`, `remote-exec`, and `local-exec` provisioners in Terraform, along with examples for each.
-
+refrence : https://developer.hashicorp.com/terraform/language/resources/provisioners/file
 1. **file Provisioner:**
 
    The `file` provisioner is used to copy files or directories from the local machine to a remote machine. This is useful for deploying configuration files, scripts, or other assets to a provisioned instance.
@@ -7,20 +7,34 @@ Certainly, let's delve deeper into the `file`, `remote-exec`, and `local-exec` p
    Example:
 
    ```hcl
-   resource "aws_instance" "example" {
-     ami           = "ami-0c55b159cbfafe1f0"
-     instance_type = "t2.micro"
-   }
+ resource "aws_instance" "web" {
+  # ...
 
-   provisioner "file" {
-     source      = "local/path/to/localfile.txt"
-     destination = "/path/on/remote/instance/file.txt"
-     connection {
-       type     = "ssh"
-       user     = "ec2-user"
-       private_key = file("~/.ssh/id_rsa")
-     }
-   }
+  # Copies the myapp.conf file to /etc/myapp.conf
+  provisioner "file" {
+    source      = "conf/myapp.conf"
+    destination = "/etc/myapp.conf"
+  }
+
+  # Copies the string in content into /tmp/file.log
+  provisioner "file" {
+    content     = "ami used: ${self.ami}"
+    destination = "/tmp/file.log"
+  }
+
+  # Copies the configs.d folder to /etc/configs.d
+  provisioner "file" {
+    source      = "conf/configs.d"
+    destination = "/etc"
+  }
+
+  # Copies all files and folders in apps/app1 to D:/IIS/webapp1
+  provisioner "file" {
+    source      = "apps/app1/"
+    destination = "D:/IIS/webapp1"
+  }
+}
+
    ```
 
    In this example, the `file` provisioner copies the `localfile.txt` from the local machine to the `/path/on/remote/instance/file.txt` location on the AWS EC2 instance using an SSH connection.
@@ -32,25 +46,22 @@ Certainly, let's delve deeper into the `file`, `remote-exec`, and `local-exec` p
    Example:
 
    ```hcl
-   resource "aws_instance" "example" {
-     ami           = "ami-0c55b159cbfafe1f0"
-     instance_type = "t2.micro"
-   }
+  resource "aws_instance" "web" {
+  # ...
 
-   provisioner "remote-exec" {
-     inline = [
-       "sudo yum update -y",
-       "sudo yum install -y httpd",
-       "sudo systemctl start httpd",
-     ]
+  provisioner "file" {
+    source      = "script.sh"
+    destination = "/tmp/script.sh"
+  }
 
-     connection {
-       type        = "ssh"
-       user        = "ec2-user"
-       private_key = file("~/.ssh/id_rsa")
-       host        = aws_instance.example.public_ip
-     }
-   }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/script.sh",
+      "/tmp/script.sh args",
+    ]
+  }
+}
+
    ```
 
    In this example, the `remote-exec` provisioner connects to the AWS EC2 instance using SSH and runs a series of commands to update the package repositories, install Apache HTTP Server, and start the HTTP server.
