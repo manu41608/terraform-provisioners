@@ -5,9 +5,8 @@ refrence : https://developer.hashicorp.com/terraform/language/resources/provisio
    The `file` provisioner is used to copy files or directories from the local machine to a remote machine. This is useful for deploying configuration files, scripts, or other assets to a provisioned instance.
 
    Example:
-
-   ```hcl
- resource "aws_instance" "web" {
+```hcl
+  resource "aws_instance" "web" {
   # ...
 
   # Copies the myapp.conf file to /etc/myapp.conf
@@ -34,9 +33,7 @@ refrence : https://developer.hashicorp.com/terraform/language/resources/provisio
     destination = "D:/IIS/webapp1"
   }
 }
-
-   ```
-
+```
    In this example, the `file` provisioner copies the `localfile.txt` from the local machine to the `/path/on/remote/instance/file.txt` location on the AWS EC2 instance using an SSH connection.
 
 2. **remote-exec Provisioner:**
@@ -45,7 +42,7 @@ refrence : https://developer.hashicorp.com/terraform/language/resources/provisio
 
    Example:
 
-   ```hcl
+```hcl
   resource "aws_instance" "web" {
   # ...
 
@@ -61,8 +58,8 @@ refrence : https://developer.hashicorp.com/terraform/language/resources/provisio
     ]
   }
 }
+```
 
-   ```
 
    In this example, the `remote-exec` provisioner connects to the AWS EC2 instance using SSH and runs a series of commands to update the package repositories, install Apache HTTP Server, and start the HTTP server.
 
